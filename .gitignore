@@ -1,0 +1,8 @@
+f1tenth_gym_ros/
+.vscode
+
+__pycache__
+
+build/
+install
+log/
