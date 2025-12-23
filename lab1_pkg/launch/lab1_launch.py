@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
-def generate_launch_desription():
+def generate_launch_description():
     talker_node = Node(executable="talker",
                  package="lab1_pkg",
                  output="screen")
