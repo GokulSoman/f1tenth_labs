@@ -11,7 +11,7 @@ class TalkerNode : public rclcpp::Node{
             this->declare_parameter<double>("d", 0.0);
 
 
-            publisher_ = this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>("ackermann_steering", 10);
+            publisher_ = this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>("drive", 10);
             // timer_ = this->create_wall_timer(std::chrono::milliseconds(500), 
             //                             std::bind(&TalkerNode::callback_publisher, this));
 
