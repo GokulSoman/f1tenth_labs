@@ -38,7 +38,9 @@ add_executable(safety_node src/safety_node.cpp)
 ament_target_dependencies( safety_node rclcpp ackermann_msgs sensor_msgs nav_msgs
 )
 
+install(TARGETS safety_node
+        DESTINATION lib/${PROJECT_NAME})
+
+
 ament_package()
 
-install(TARGET safety_node
-        DESTINATION lib/${PROJECT_NAME})
