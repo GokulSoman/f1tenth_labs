@@ -21,8 +21,10 @@ class TemplateNode : public rclcpp::Node {
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_subscriber;
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_subscriber;
         rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr publisher;
-        Eigen::ArrayXf prev_ranges, range_diff, vel, ttc, rads;
-        float time_prev = 0, dt=0;
+        Eigen::ArrayXf prev_ranges, range_diff, range_vel, ttc, rads;
+        double time_prev = 0, dt=0;
+        Eigen::Quaterniond q;
+        Eigen::Vector3d linear_vel;
 
         void scan_sub_callback(const sensor_msgs::msg::LaserScan msg){
             
@@ -61,9 +63,9 @@ class TemplateNode : public rclcpp::Node {
                 range_diff = prev_ranges - curr_range;
                 dt = curr_time - time_prev;
                 
-                vel = (range_diff / dt); // .min(0.0);
-                vel = (vel >= 0.0f).select(std::numeric_limits<float>::infinity(), vel);
-                ttc = curr_range / -vel;
+                range_vel = (range_diff / dt); // .min(0.0);
+                range_vel = (range_vel >= 0.0f).select(std::numeric_limits<float>::infinity(), range_vel);
+                ttc = curr_range / -range_vel;
 
                 // check whether longitudinal velocity matches low ttc 
 
@@ -75,7 +77,15 @@ class TemplateNode : public rclcpp::Node {
         }
 
         void odom_sub_callback(nav_msgs::msg::Odometry odom){
-
+            linear_vel = Eigen::Vector3d(odom.twist.twist.linear.x,
+                                        odom.twist.twist.linear.y,
+                                        odom.twist.twist.linear.z);
+            // auto angular_vel = odom.twist.twist.angular; // not needed
+            auto orientation = odom.pose.pose.orientation;
+            q = Eigen::Quaterniond(orientation.w,
+                        orientation.x,
+                    orientation.y,
+                orientation.z);
         }
 };
 
